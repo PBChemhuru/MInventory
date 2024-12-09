@@ -107,9 +107,6 @@ Route::get('/admin/allclincistockvalue', [Admincontroller::class, 'valuereport']
 Route::get('/report/download-csv', [Admincontroller::class, 'downloadCsv'])->name('report.download_csv');
 Route::get('/report/download-csv/clinic', [Admincontroller::class, 'downloadclinicCsv'])->name('reportclinic.download_csv');
 Route::get('/report/download-csv/clinic/value', [Admincontroller::class, 'downloadvalueCsv'])->name('downloadvalueCsv.download_csv');
-
-
-
 Route::post('/admin/selecteclinicvalue', [Admincontroller::class, 'getvaluereport'])->name('getvaluereport');
 Route::get('/account/Dispense/dispense/save', [DispenseController::class, 'dispensehistoryadmin'])->middleware('auth')->name('dishistoryadmin');
 Route::post('/account/Dispense/dispense/his', [DispenseController::class, 'searchhisadmin'])->middleware('auth')->name('searchhisadmin');
