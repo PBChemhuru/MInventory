@@ -56,15 +56,6 @@
                                 <tr>
                                     <th
                                         style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: bold;">
-                                        Item Name</th>
-                                    <th
-                                        style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: bold;">
-                                        Item Number</th>
-                                    <th
-                                        style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: bold;">
-                                        Quantity</th>
-                                    <th
-                                        style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: bold;">
                                         Clinic</th>
                                     <th
                                         style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: bold;">
@@ -81,6 +72,9 @@
                                     <th
                                         style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: bold;">
                                         Proof of delivery</th>
+                                        <th
+                                        style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: bold;">
+                                        Transaction Details</th>
                                 </tr>
                             </thead>
 
@@ -88,12 +82,6 @@
                             <tbody>
                                 @foreach ($rstocks as $rstock)
                                     <tr style="background-color: #fff; border-bottom: 1px solid #ddd;">
-                                        <td style="padding: 10px; text-align: left; border: 1px solid #ddd;">
-                                            {{ $rstock->item_name }}</td>
-                                        <td style="padding: 10px; text-align: left; border: 1px solid #ddd;">
-                                            {{ $rstock->item_number }}</td>
-                                        <td style="padding: 10px; text-align: left; border: 1px solid #ddd;">
-                                            {{ $rstock->item_quantity }}</td>
                                         <td style="padding: 10px; text-align: left; border: 1px solid #ddd;">
                                             {{ $rstock->clinics }}</td>
                                         <td style="padding: 10px; text-align: left; border: 1px solid #ddd;">
@@ -108,41 +96,94 @@
                                                 type="button" class="btn btn-success" data-toggle="modal"
                                                 data-target="#receiveModal{{ $rstock->id }}"><i
                                                     class="fas fa-eye"></i>
-                                                
                                             </button>
-                                            {{-- receive stock model design start here --}}
-                                            <div class="modal fade" id="receiveModal{{ $rstock->id }}" tabindex="-1"
-                                                role="dialog" aria-labelledby="receiveModal{{ $rstock->id }}"
-                                                aria-hidden="true">
-                                                <div class="modal-dialog" role="document">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header" style="padding: 0px;height:50px">
-                                                            <div style="color:white;width:100%;height:100%;background-color:green;top:0px;text-align:center"
-                                                                class="modal-title"
-                                                                id="receiveModal{{ $rstock->id }}">
-                                                                <h5 class="modal-title" id="viewModalLabel{{ $rstock->id }}">
-                                                                    Proof of Delivery {{ $rstock->id }} <a
-                                                                        href="{{ asset($rstock->p_o_r) }}"
-                                                                        download="{{ basename($rstock->p_o_r) }}"
-                                                                        class="btn btn-primary">
-                                                                        <i class="fas fa-download"
-                                                                            style="font-size: 30px; color: blue;"></i>
-                                                                    </a></h5>
-                                                                <button style="display:inline" type="button"
-                                                                    class="close" data-dismiss="modal"
-                                                                    aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-primary" data-toggle="modal"
+                                                data-target="#detailsModal{{ $rstock->id }}">
+                                                View
+                                            </button>
+                                        </td>
+                                        {{-- receive stock model design start here --}}
+                                        <div class="modal fade" id="receiveModal{{ $rstock->id }}" tabindex="-1"
+                                            role="dialog" aria-labelledby="receiveModal{{ $rstock->id }}"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header" style="padding: 0px;height:50px">
+                                                        <div style="color:white;width:100%;height:100%;background-color:green;top:0px;text-align:center"
+                                                            class="modal-title" id="receiveModal{{ $rstock->id }}">
+                                                            <h5 class="modal-title"
+                                                                id="viewModalLabel{{ $rstock->id }}">
+                                                                Proof of Delivery {{ $rstock->id }}</h5>
+                                                            <button style="display:inline" type="button" class="close"
+                                                                data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        
+                                                    </div>
+                                                    <div class="modal-body text-center">
+                                                        <iframe src="{{ asset($rstock->p_o_r) }}" style="width: 100%; height: 500px;" frameborder="0">
+                                                            Your browser does not support iframes.
+                                                        </iframe>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <a href="{{ asset($rstock->p_o_r) }}" class="btn btn-success" download>Download PDF</a>
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                    </div>
+                                                    
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Transaction Details Modal -->
+                                        <div class="modal fade" id="detailsModal{{ $rstock->id }}" tabindex="-1"
+                                            role="dialog" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg" role="document">
+                                                <div class="modal-content dark:bg-gray-800">
+                                                    <div class="modal-header bg-green-600 text-white">
+                                                        <h5 class="modal-title">Transaction Details - ID
+                                                            {{ $rstock->id }}</h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        @php
+                                                            $details = json_decode($rstock->details, true); // Decode JSON data
+                                                        @endphp
+                                                        <div class="table-responsive">
+                                                            <div class="container mt-4">
+                                                                <div class="row">
+                                                                    @foreach ($details as $detail)
+                                                                        <div class="col-md-4 mb-4">
+                                                                            <div class="card h-100">
+                                                                                <div
+                                                                                    class="card-body d-flex flex-column">
+                                                                                    <h5 class="card-title">
+                                                                                        {{ $detail['item_name'] }}</h5>
+                                                                                    <div class="flex-grow-1">
+                                                                                        <p><strong>Item Number:</strong>
+                                                                                            {{ $detail['item_number'] }}
+                                                                                        </p>
+                                                                                        <p><strong>Quantity:</strong>
+                                                                                            {{ $detail['item_quantity'] }}
+                                                                                        </p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    @endforeach
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <img src="{{ asset($rstock->p_o_r) }}" class="card-img-top"
-                                                        style="object-fit: cover; height: 500px;width:500px">
-
-
                                                     </div>
                                                 </div>
                                             </div>
-                                        </td>
+                                        </div>
                                     </tr>
                                 @endforeach
                             </tbody>

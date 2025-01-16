@@ -76,7 +76,7 @@
                                         <tbody>
                                             <?php
                                             $mypendingrequest = DB::table('stock_requests')
-                                                ->where('requester', '=', auth()->user()->name)
+                                                ->where('clinic', '=', auth()->user()->clinic)
                                                 ->get();
                                             ?>
 

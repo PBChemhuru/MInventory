@@ -47,6 +47,17 @@ class requestController extends Controller
 
     public function viewrequest(Request $request)
     {
+        $approver =auth()->user()->name;
+        stock_request::where('id', 'like', $request->id)->update(['status'=>'Approved','approver'=>$approver,'date_approved'=> now()]);
+
+        return redirect()->route('mainstock')->with('success', 'Request approved ');
+
+
+
+    }
+
+    public function viewrequest2(Request $request)
+    {
 
         $requested = stock_request::where('id', 'like', $request->id)->get()->first();
         $requestedid = $request->id;
@@ -55,11 +66,11 @@ class requestController extends Controller
         $requestedclinic = $requested->clinic;
         $requestedquantity = $requested->item_quantity;
 
-        $maincurrentstock = StockItem::where('item_name', 'like', $requestedname)->get()->first()->item_quantity;
+        $maincurrentstock = StockItem::where('item_number', 'like', $requestednumber)->get()->first()->item_quantity;
         $sentstock = DB::table("pending_stocks")
 
             ->select(DB::raw('DATE_FORMAT(updated_at, "%M-%y") as date'), DB::raw('SUM(item_quantity) as monthsum'))
-            ->where('item_name', 'like', $requestedname)
+            ->where('item_number', 'like', $requestednumber)
             ->where('clinics', 'like', $requestedclinic)
             ->where('status', 'like', 'Received')
             ->groupBy(DB::raw('MONTH(updated_at)'))
@@ -308,8 +319,62 @@ class requestController extends Controller
 
         // Execute the query and get the results
         $results = $query->get();
+        session(['search_results' => $results]);
+
 
         // Return the results to a view or as a JSON response
         return view('Requests.Requestsearch', compact('results')); // Adjust view name as needed
+    }
+
+    public function exportCsv()
+    {
+        $results = session('search_results', []);
+
+        if (empty($results)) {
+            return back()->with('error', 'No search results found to export.');
+        }
+
+        // Generate CSV response
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="search_results.csv"',
+        ];
+
+        $callback = function () use ($results) {
+            $file = fopen('php://output', 'w');
+
+
+            // Add the CSV headers
+            fputcsv($file, [
+                'Item Name',
+                'Item Number',
+                'Quantity',
+                'Clinic',
+                'Status',
+                'Requester',
+                'Requested At',
+                'Handled By',
+                'Handled At',
+            ]);
+
+            // Write each result to the CSV
+            foreach ($results as $result) {
+                fputcsv($file, [
+                    $result->item_name,
+                    $result->item_number,
+                    $result->item_quantity,
+                    $result->clinic,
+                    $result->status ?? 'Pending', // Default to 'Pending' if null
+                    $result->procurer,
+                    $result->created_at,
+                    $result->recieved_by,
+                    $result->updated_at,
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

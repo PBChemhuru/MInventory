@@ -46,15 +46,25 @@ Route::get('/mainstock/search', [mainStockController::class,  'searchmain'])->mi
 Route::get('/mainstock', [mainStockController::class, 'showmain'])->middleware('auth')->name('mainstock');
 //update to mainstock
 Route::patch('/mainstock/{stock_item}', [mainStockController::class, 'updatemain'])->middleware('auth')->name('updateStock');
+//delete mainstock
+Route::delete('/mainstock/delete/{id}', [mainStockController::class, 'deletemain'])->name('mainstock.delete');
 //Add new stock item
 Route::post('/mainstock', [mainStockController::class, 'addnewitem'])->middleware('auth')->name('addnewitem');
-
 //transaction journal search
 Route::post('/StockTransactions/search', [StockTransactionsController::class, 'seachjournal'])->middleware('auth')->name('searchStock');
 //printing report routes
 Route::post('/StockTransactions/search/print', [printcontroller::class, 'printstransactionresults'])->middleware('auth')->name('printstransactionresults');
-
-
+//BULK TRANSACTION
+Route::get('mainstock/bulkform', [mainStockController::class, 'bulkform'])->middleware('auth')->name('bulkform');
+Route::get('mainstock/bulkformadd', [mainStockController::class, 'bulkformadd'])->middleware('auth')->name('bulkformadd');
+Route::post('mainstock/bulksend', [mainStockController::class, 'bulksend'])->middleware('auth')->name('bulksend');
+Route::post('mainstock/bulkadd', [mainStockController::class, 'bulkadd'])->middleware('auth')->name('bulkadd');
+//csv routes
+Route::get('/StockTransactions/export', [StockTransactionsController::class, 'exportCsv'])->name('transactions.export.csv');
+Route::get('/requests/export', [requestController::class, 'exportCsv'])->name('arequests.export.csv');
+Route::get('/dispense/export', [DispenseController::class, 'exportCsv'])->name('dispense.export.csv');
+Route::get('/rstock/export', [clincStockController::class, 'exportCsv'])->name('rstock.export.csv');
+Route::get('/rstock/export', [clincStockController::class, 'exportrCsv'])->name('requeststock.export.csv');
 //recieve stock
 Route::get('/clinicstock/pendingstock', [clincStockController::class, 'showpending'])->middleware('auth')->name('pendingstock');
 Route::get('/clinicstock/receivedstock', [clincStockController::class, 'receivedstock'])->middleware('auth')->name('receivedstock');
@@ -65,6 +75,9 @@ Route::post('/clinicstock/search/rstock', [clincStockController::class, 'searchr
 //stocktransfer
 Route::get('clinicstock/stocktransfer', [clincStockController::class, 'stocktransfer'])->middleware('auth')->name('stocktransfer');
 Route::post('/clinicstock/stocktransfer', [clincStockController::class, 'savetransfer'])->middleware('auth')->name('savetransfer');
+Route::get('/clinicstock/stocktransferpage', [clincStockController::class, 'gettransferpage'])->middleware('auth')->name('gettransferpage');
+Route::post('clinicstock/bulktransfer', [clincStockController::class, 'bulktransfer'])->middleware('auth')->name('bulktransfer');
+
 //search
 Route::post('/drugtransfers/search', [clincStockController::class, 'searchtransfer'])->name('searchtransfer');
 
@@ -86,11 +99,20 @@ Route::patch('/mainstock/dis/{stock_item}', [requestController::class, 'approver
 Route::post('/sendemail', [MailerController::class, 'sendEmail'])->name('sendEmail');
 //admin options
 Route::get('/admin/allclincistock', [Admincontroller::class, 'allclinicstocks'])->name('getallstocks');
-Route::post('/admin/selecteclinic', [Admincontroller::class, 'showclinicchart'])->name('showclinicchart');
-Route::post('/admin/selecteclinic/test', [Admincontroller::class, 'test'])->name('test');
+Route::get('/admin/drug-report', [Admincontroller::class, 'showDrugReport'])->name('showDrugReport');
+Route::post('/admin/drug-report-data/yearly', [Admincontroller::class, 'globalstats'])->name('globalstats');    
+Route::get('/admin/allclincistockbatch', [Admincontroller::class, 'allclinicstocksbatch'])->name('batch');
+Route::post('/admin/selecteclinicbatch', [Admincontroller::class, 'showclinicchartbatch'])->name('batchchart');
+Route::get('/admin/allclincistockvalue', [Admincontroller::class, 'valuereport'])->name('valuereport');
+Route::get('/report/download-csv', [Admincontroller::class, 'downloadCsv'])->name('report.download_csv');
+Route::get('/report/download-csv/clinic', [Admincontroller::class, 'downloadclinicCsv'])->name('reportclinic.download_csv');
+Route::get('/report/download-csv/clinic/value', [Admincontroller::class, 'downloadvalueCsv'])->name('downloadvalueCsv.download_csv');
+Route::post('/admin/selecteclinicvalue', [Admincontroller::class, 'getvaluereport'])->name('getvaluereport');
+Route::get('/account/Dispense/dispense/save', [DispenseController::class, 'dispensehistoryadmin'])->middleware('auth')->name('dishistoryadmin');
+Route::post('/account/Dispense/dispense/his', [DispenseController::class, 'searchhisadmin'])->middleware('auth')->name('searchhisadmin');
 Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/admin/createclinic',[Admincontroller::class, 'getcreateclinicform'])->name('getcreateclinicform');
-    Route::post('/admin/createclinic/save',[Admincontroller::class, 'createclinic'])->name('createclinic');
+    Route::get('/admin/createclinic', [Admincontroller::class, 'getcreateclinicform'])->name('getcreateclinicform');
+    Route::post('/admin/createclinic/save', [Admincontroller::class, 'createclinic'])->name('createclinic');
     Route::get('/registered', [RegisteredUserController::class, 'create'])->middleware('auth')->name('registerationform');
     Route::post('/registered', [RegisteredUserController::class, 'store'])->middleware('auth')->name('registered');
     Route::get('register', [RegisteredUserController::class, 'create'])

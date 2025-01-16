@@ -18,6 +18,8 @@ class mainstock_journal extends Model
         'procurer',
         'batch_number',
         'p_o_d',
-        'p_o_r'
+        'p_o_r',
+        'details',
+        'total_items'
     ];
 }

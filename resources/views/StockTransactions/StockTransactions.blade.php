@@ -1,43 +1,28 @@
 <x-app-layout>
     <x-slot name="header" class="bg-gray-400 dark:bg-green-950">
-        <div class="container ">
-            <div class="row ">
+        <div class="container">
+            <div class="row">
                 <div class="col-sm">
                     <h2 class="font-semibold text-xl text-black dark:text-gray-700 leading-tight mt-2">
                         {{ __('Main Stock Transactions') }}
                     </h2>
                 </div>
                 <div class="col-sm">
+                    <div class="py-1" style="float:right;">
+                        @if (session('error'))
+                            <div class="alert alert-danger">
+                                {{ session('error') }}
+                            </div>
+                        @endif
+                        @if (\Session::has('success'))
+                            <div class="alert alert-success">
+                                <p>{{ \Session::get('success') }}</p>
+                            </div>
+                        @endif
 
-                    <div class="col-sm">
-                        <div class="py-1" style="float:right;">
-                            @if (count($errors) > 0)
-                                <div class="alert alert-danger">
-                                    <ul>
-                                        @foreach ($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-
-                                    </ul>
-                                </div>
-                            @endif
-                            @if (session('error'))
-                                <div class="alert alert-danger">
-                                    {{ session('error') }}
-                                </div>
-                            @endif
-                            @if (\Session::has('success'))
-                                <div class="alert alert-success">
-                                    <p>{{ \Session::get('success') }}</p>
-
-                                </div>
-                            @endif
-
-                            <button type="button" class="btn btn-success" data-toggle="modal"
-                                data-target="#searchModal">
-                                Search Transactions
-                            </button>
-                        </div>
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#searchModal">
+                            Search Transactions
+                        </button>
                     </div>
                 </div>
             </div>
@@ -49,178 +34,199 @@
             <div class="bg-white dark:bg-blue-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-3 text-gray-900 dark:bg-gray-800">
                     <center>
-                        <table style="border-collapse: collapse;width: 100%;"
-                            class=" dark:bg-gray-800 dark:text-gray-200">
+                        <!-- Table Structure -->
+                        <div id="printArea" class="print-area">
+                            <div class="table-responsive" style="overflow-x: auto;">
+                                <table
+                                    class="table table-striped table-bordered w-full dark:bg-gray-800 dark:text-gray-200">
+                                    <!-- Table Header -->
+                                    <thead>
+                                        <tr class="bg-gray-400 dark:bg-zinc-900 dark:text-white text-black">
+                                            <th style="padding: 8px; text-align: center; font-size: 18px;">Clinic</th>
+                                            <th style="padding: 8px; text-align: center; font-size: 18px;">Procurer</th>
+                                            <th style="padding: 8px; text-align: center; font-size: 18px;">Received By
+                                            </th>
+                                            <th style="padding: 8px; text-align: center; font-size: 18px;">Completed At
+                                            </th>
+                                            <th style="padding: 8px; text-align: center; font-size: 18px;">Received At
+                                            </th>
+                                            <th style="padding: 8px; text-align: center; font-size: 18px;">P_O_D</th>
+                                            <th style="padding: 8px; text-align: center; font-size: 18px;">P_O_R</th>
+                                            <th style="padding: 8px; text-align: center; font-size: 18px;">Details</th>
 
-                            <tr style="padding: 8px;text-align: left;border-bottom: 1px solid #DDD;"
-                                class="bg-gray-400 dark:bg-zinc-900 dark:text-white text-black">
-                                <th
-                                    style="padding: 8px;text-align: left;border-bottom: 1px solid #DDD; text-align: center; font-size: 18px">
-                                    Item
-                                    Name</th>
-                                <th
-                                    style="padding: 8px;text-align: left;border-bottom: 1px solid #DDD; text-align: center; font-size: 18px">
-                                    Item
-                                    Number
-                                </th>
-                                <th
-                                    style="padding: 8px;text-align: left;border-bottom: 1px solid #DDD; text-align: center; font-size: 18px">
-                                    Quantity</th>
-                                <th
-                                    style="padding: 8px;text-align: left;border-bottom: 1px solid #DDD; text-align: center; font-size: 18px">
-                                    Clinic</th>
-                                <th
-                                    style="padding: 8px;text-align: left;border-bottom: 1px solid #DDD; text-align: center; font-size: 18px">
-                                    Expiry
-                                    Date
-                                </th>
-                                <th
-                                    style="padding: 8px;text-align: left;border-bottom: 1px solid #DDD; text-align: center; font-size: 18px">
-                                    Procurer</th>
-                                <th
-                                    style="padding: 8px;text-align: left;border-bottom: 1px solid #DDD; text-align: center; font-size: 18px">
-                                    Completed At:
-                                </th>
-                                <th
-                                    style="padding: 8px;text-align: left;border-bottom: 1px solid #DDD; text-align: center; font-size: 18px">
-                                    Recieved By:
-                                </th>
-                                <th
-                                    style="padding: 8px;text-align: left;border-bottom: 1px solid #DDD; text-align: center; font-size: 18px">
-                                    Recieved At:
-                                </th>
-                                <th
-                                    style="padding: 8px;text-align: left;border-bottom: 1px solid #DDD; text-align: center; font-size: 18px">
-                                    P_O_D
-                                </th>
-                                <th
-                                    style="padding: 8px;text-align: left;border-bottom: 1px solid #DDD; text-align: center; font-size: 18px">
-                                    P_O_R
-                                </th>
-                            </tr>
-                            <tr class="dark:text-gray-200">
-
-                                @foreach ($entries as $entry)
-                                    <th
-                                        style="border-bottom: 1px solid #DDD; padding: 5px; border-right: 1px solid #DDD; border-left: 1px solid #DDD; text-align: left; padding-left: 10px">
-                                        {{ $entry->item_name }}</th>
-                                    <th
-                                        style="border-bottom: 1px solid #DDD; padding: 2px; border-right: 1px solid #DDD; text-align: left; padding-left: 10px">
-                                        {{ $entry->item_number }}</th>
-                                    <th
-                                        style="border-bottom: 1px solid #DDD; padding: 2px; border-right: 1px solid #DDD; text-align: left; padding-left: 10px">
-                                        {{ $entry->item_quantity }}</th>
-                                    <th
-                                        style="border-bottom: 1px solid #DDD; padding: 2px; border-right: 1px solid #DDD; text-align: left; padding-left: 10px">
-                                        {{ $entry->clinics }}</th>
-                                    <th
-                                        style="border-bottom: 1px solid #DDD; padding: 2px; border-right: 1px solid #DDD; text-align: left; padding-left: 10px">
-                                        {{ $entry->expiry_date }}</th>
-                                    <th
-                                        style="border-bottom: 1px solid #DDD; padding: 2px; border-right: 1px solid #DDD; text-align: left; padding-left: 10px">
-                                        {{ $entry->procurer }}</th>
-                                    <th
-                                        style="border-bottom: 1px solid #DDD; padding: 2px; border-right: 1px solid #DDD; text-align: left; padding-left: 10px">
-                                        {{ $entry->created_at }}</th>
-                                    <th
-                                        style="border-bottom: 1px solid #DDD; padding: 2px; border-right: 1px solid #DDD; text-align: left; padding-left: 10px">
-                                        {{ $entry->recieved_by }}</th>
-                                    <th
-                                        style="border-bottom: 1px solid #DDD; padding: 2px; border-right: 1px solid #DDD; text-align: left; padding-left: 10px">
-                                        {{ $entry->updated_at }}</th>
-                                    <th
-                                        style="border-bottom: 1px solid #DDD; padding: 2px; border-right: 1px solid #DDD; text-align: left; padding-left: 10px">
-                                        <button type="button" class="btn btn-primary" data-toggle="modal"
-                                            data-target="#viewModal{{ $entry->id }}">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                    </th>
-                                    <th
-                                        style="border-bottom: 1px solid #DDD; padding: 2px; border-right: 1px solid #DDD; text-align: left; padding-left: 10px">
-                                        <button type="button" class="btn btn-primary" data-toggle="modal"
-                                            data-target="#viewrModal{{ $entry->id }}">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                    </th>
-                                    {{-- modal design view --}}
-                                    <div class="modal fade mt-11 " id="viewModal{{ $entry->id }}" tabindex="-1"
-                                        role="dialog" aria-labelledby="viewModalLabel{{ $entry->id }}"
-                                        aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-                                            <div class="modal-content dark:bg-gray-800">
-                                                <div class="modal-header"
-                                                    style="background-color: green; color: white;">
-                                                    <h5 class="modal-title" id="viewModalLabel{{ $entry->id }}">
-                                                        Proof of Delivery {{ $entry->id }} <a
-                                                            href="{{ asset($entry->p_o_d) }}"
-                                                            download="{{ basename($entry->p_o_d) }}"
-                                                            class="btn btn-primary">
-                                                            <i class="fas fa-download"
-                                                                style="font-size: 30px; color: blue;"></i>
-                                                        </a></h5>
-                                                    <button type="button" class="close" data-dismiss="modal"
-                                                        aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
+                                        </tr>
+                                    </thead>
+                                    <!-- Table Body -->
+                                    <tbody>
+                                        @foreach ($entries as $entry)
+                                            <tr class="dark:text-gray-200">
+                                                <td>{{ $entry->clinics }}</td>
+                                                <td>{{ $entry->procurer }}</td>
+                                                <td>{{ $entry->recieved_by }}</td>
+                                                <td>{{ $entry->created_at }}</td>
+                                                <td>{{ $entry->updated_at }}</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                                                        data-target="#viewModal{{ $entry->id }}">
+                                                        View
                                                     </button>
-                                                </div>
-                                                <div>
-
-                                                    <img src="{{ asset($entry->p_o_d) }}" class="card-img-top" alt="No image"
-                                                        style="object-fit: cover; height: 500px;width:500px">
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {{-- modal2 design view --}}
-                                    <div class="modal fade mt-11 " id="viewrModal{{ $entry->id }}" tabindex="-1"
-                                        role="dialog" aria-labelledby="viewrModalLabel{{ $entry->id }}"
-                                        aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-                                            <div class="modal-content dark:bg-gray-800">
-                                                <div class="modal-header"
-                                                    style="background-color: green; color: white;">
-                                                    <h5 class="modal-title" id="viewrModalLabel{{ $entry->id }}">
-                                                        Proof of Delivery {{ $entry->id }} <a
-                                                            href="{{ asset($entry->p_o_r) }}"
-                                                            download="{{ basename($entry->p_o_r) }}"
-                                                            class="btn btn-primary">
-                                                            <i class="fas fa-download"
-                                                                style="font-size: 30px; color: blue;"></i>
-                                                        </a></h5>
-                                                    <button type="button" class="close" data-dismiss="modal"
-                                                        aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                                                        data-target="#viewrModal{{ $entry->id }}">
+                                                        View
                                                     </button>
-                                                </div>
-                                                <div>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                                                        data-target="#detailsModal{{ $entry->id }}">
+                                                        View
+                                                    </button>
+                                                </td>
+                                            </tr>
 
-                                                    <img src="{{ asset($entry->p_o_r) }}" class="card-img-top" alt="No image"
-                                                        style="object-fit: cover; height: 500px;width:500px">
-                                                </div>
+                                            <!-- Proof of Delivery Modal -->
+                                            <div class="modal fade" id="viewModal{{ $entry->id }}" tabindex="-1"
+                                                role="dialog" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content dark:bg-gray-800">
+                                                        <div class="modal-header bg-green-600 text-white">
+                                                            <h5 class="modal-title">Proof of Delivery - ID
+                                                                {{ $entry->id }}</h5>
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body text-center">
+                                                            @if ($entry->p_o_d)
+                                                                <iframe src="{{ asset($entry->p_o_d) }}"
+                                                                    style="width: 100%; height: 500px;" frameborder="0">
+                                                                    Your browser does not support iframes.
+                                                                </iframe>
+                                                            @else
+                                                                <p>No file available for preview.</p>
+                                                            @endif
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <a href="{{ asset($entry->p_o_d) }}"
+                                                                class="btn btn-success" download>Download PDF</a>
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">Close</button>
+                                                        </div>
 
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
 
-                            </tr>
-                            @endforeach
+                                            <!-- Proof of Receipt Modal -->
+                                            <div class="modal fade" id="viewrModal{{ $entry->id }}" tabindex="-1"
+                                                role="dialog" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content dark:bg-gray-800">
+                                                        <div class="modal-header bg-green-600 text-white">
+                                                            <h5 class="modal-title">Proof of Receipt - ID
+                                                                {{ $entry->id }}</h5>
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body text-center">
+                                                            @if ($entry->p_o_r)
+                                                                <iframe src="{{ asset($entry->p_o_r) }}"
+                                                                    style="width: 100%; height: 500px;" frameborder="0">
+                                                                    Your browser does not support iframes.
+                                                                </iframe>
+                                                            @else
+                                                                <p>No file available for preview.</p>
+                                                            @endif
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <a href="{{ asset($entry->p_o_r) }}"
+                                                                class="btn btn-success" download>Download PDF</a>
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
 
-                            </tr>
-                        </table>
+                                            <!-- Transaction Details Modal -->
+                                            <div class="modal fade" id="detailsModal{{ $entry->id }}" tabindex="-1"
+                                                role="dialog" aria-hidden="true">
+                                                <div class="modal-dialog modal-lg" role="document">
+                                                    <div class="modal-content dark:bg-gray-800">
+                                                        <div class="modal-header bg-green-600 text-white">
+                                                            <h5 class="modal-title">Transaction Details - ID
+                                                                {{ $entry->id }}</h5>
+                                                            <button type="button" class="close"
+                                                                data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            @php
+
+                                                                $details = json_decode($entry->details, true); // Decode JSON data
+                                                            @endphp
+                                                            @if (is_array($details))
+                                                                <div class="table-responsive">
+                                                                    <div class="container mt-4">
+                                                                        <div class="row">
+                                                                            @foreach ($details as $detail)
+                                                                                <div class="col-md-4 mb-4">
+                                                                                    <div class="card h-100">
+                                                                                        <div
+                                                                                            class="card-body d-flex flex-column">
+                                                                                            <h5 class="card-title">
+                                                                                                {{ $detail['item_name'] }}
+                                                                                            </h5>
+                                                                                            <div class="flex-grow-1">
+                                                                                                <p><strong>Item
+                                                                                                        Number:</strong>
+                                                                                                    {{ $detail['item_number'] }}
+                                                                                                </p>
+                                                                                                <p><strong>Quantity:</strong>
+                                                                                                    {{ $detail['item_quantity'] }}
+                                                                                                </p>
+                                                                                                <p><strong>Price:</strong>
+                                                                                                    ${{ DB::table('stock_items')->where('item_number', $detail['item_number'])->value('price') * $detail['item_quantity'] }}
+
+                                                                                                </p>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            @endforeach
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            @else
+                                                                nothing here
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </center>
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- modal design search --}}
-    <div class="modal fade mt-11 " id="searchModal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel"
+    {{-- Search Modal --}}
+    <div class="modal fade mt-11" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content dark:bg-gray-800">
                 <div class="modal-header" style="background-color: green; color: white;">
-                    <h5 class="modal-title" id="searchModalLabel">SEARCH</h5>
+                    <h5 class="modal-title" id="searchModalLabel">Search Transactions</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -246,18 +252,12 @@
                                     <label for="clinics" class="dark:text-white">Choose a Clinic</label>
                                     <select name="clinics" id="clinics" class="form-control"
                                         style="border-radius: 9px">
-                                        <?php
-                                        $clinics = DB::table('clinics')->get('clinic_name');
-                                        ?>
                                         <option value="" disabled selected>Select a clinic</option>
-                                        @foreach ($clinics as $clinic)
+                                        @foreach (DB::table('clinics')->get() as $clinic)
                                             <option value="{{ $clinic->clinic_name }}">{{ $clinic->clinic_name }}
                                             </option>
                                         @endforeach
                                     </select>
-                                    @error('clinics')
-                                        <p class="text-danger">{{ $message }}</p>
-                                    @enderror
                                 </div>
                                 <div class="col">
                                     <label for="procurer" class="dark:text-white">Procurer</label>
@@ -287,6 +287,29 @@
             </div>
         </div>
     </div>
+    <!-- Back to Top Button -->
+    <button id="backToTopBtn" class="btn btn-primary" onclick="scrollToTop()"
+        style="position: fixed; bottom: 20px; right: 20px; display: none; z-index: 1000;">
+        <i class="fa fa-arrow-up"></i> Back to Top
+    </button>
 
+    <script>
+        // Function to scroll the page back to the top
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
 
+        // Show the button when the user scrolls down 100px
+        window.onscroll = function() {
+            var btn = document.getElementById("backToTopBtn");
+            if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+                btn.style.display = "block";
+            } else {
+                btn.style.display = "none";
+            }
+        };
+    </script>
 </x-app-layout>

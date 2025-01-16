@@ -239,34 +239,105 @@
                     <button class="btn btn-primary mb-3" onclick="printResults()">
                         <i class="fa fa-print"></i> Print Results
                     </button>
+                    <button class="btn btn-success mb-3" onclick="location.href='{{ route('transactions.export.csv') }}'">
+                        <i class="fa fa-download"></i> Download CSV
+                    </button>
 
                     <div class="table-responsive">
                         <div id="printArea" class="print-area">
-                            <table class="table table-bordered table-hover table-striped">
-                                <thead class="thead-dark bg-blue-500 text-white">
-                                    <tr>
-                                        <th>Drug Name</th>
-                                        <th>Clinic From</th>
-                                        <th>Sender</th>
-                                        <th>Drug Amount</th>
-                                        <th>Clinic To</th>
-                                        <th>Receiver</th>
-                                        <th>Send At</th>
-                                        <th>Received At</th>
+                            <table class="table table-striped table-bordered w-full dark:bg-gray-800 dark:text-gray-200">
+                                <!-- Table Header -->
+                                <thead>
+                                    <tr class="bg-gray-400 dark:bg-zinc-900 dark:text-white text-black">
+                                        <th style="padding: 8px; text-align: center; font-size: 18px;">Clinic From
+                                        </th>
+                                        <th style="padding: 8px; text-align: center; font-size: 18px;">Sender</th>
+                                        <th style="padding: 8px; text-align: center; font-size: 18px;">Clinic To
+                                        </th>
+                                        <th style="padding: 8px; text-align: center; font-size: 18px;">Receiver
+                                        </th>
+                                        <th style="padding: 8px; text-align: center; font-size: 18px;">Send At</th>
+                                        <th style="padding: 8px; text-align: center; font-size: 18px;">Received At
+                                        </th>
                                     </tr>
                                 </thead>
+                                <!-- Table Body -->
                                 <tbody>
-                                    @foreach ($records as $drugTransfer)
-                                        <tr class="bg-white hover:bg-gray-100">
-                                            <td>{{ $drugTransfer->drug_name }}</td>
+                                    @foreach ($results as $drugTransfer)
+                                        <tr class="dark:text-gray-200">
                                             <td>{{ $drugTransfer->clinic_from }}</td>
                                             <td>{{ $drugTransfer->sender }}</td>
-                                            <td>{{ $drugTransfer->drug_amount }}</td>
                                             <td>{{ $drugTransfer->clinic_to }}</td>
                                             <td>{{ $drugTransfer->receiver }}</td>
                                             <td>{{ $drugTransfer->created_at }}</td>
                                             <td>{{ $drugTransfer->updated_at }}</td>
+                                            <td>
+                                                <button type="button" class="btn btn-primary"
+                                                    data-toggle="modal"
+                                                    data-target="#detailsModal{{ $drugTransfer->id }}">
+                                                    View
+                                                </button>
+                                            </td>
                                         </tr>
+                                        <!-- Transaction Details Modal -->
+                                        <div class="modal fade" id="detailsModal{{ $drugTransfer->id }}"
+                                            tabindex="-1" role="dialog" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg" role="document">
+                                                <div class="modal-content dark:bg-gray-800">
+                                                    <div class="modal-header bg-green-600 text-white">
+                                                        <h5 class="modal-title">Transaction Details - ID
+                                                            {{ $drugTransfer->id }}</h5>
+                                                        <button type="button" class="close"
+                                                            data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        @php
+                                                            $details = json_decode(
+                                                                $drugTransfer->transdetail,
+                                                                true,
+                                                            ); // Decode JSON data
+                                                        @endphp
+                                                        @if (is_array($details))
+                                                            <div class="table-responsive">
+                                                                <div class="container mt-4">
+                                                                    <div class="row">
+                                                                        @foreach ($details as $detail)
+                                                                            <div class="col-md-4 mb-4">
+                                                                                <div class="card h-100">
+                                                                                    <div
+                                                                                        class="card-body d-flex flex-column">
+                                                                                        <h5 class="card-title">
+                                                                                            {{ $detail['item_name'] }}
+                                                                                        </h5>
+                                                                                        <div class="flex-grow-1">
+                                                                                            <p><strong>Item
+                                                                                                    Number:</strong>
+                                                                                                {{ $detail['item_number'] }}
+                                                                                            </p>
+                                                                                            <p><strong>Quantity:</strong>
+                                                                                                {{ $detail['item_quantity'] }}
+                                                                                            </p>
+                                                                                            <p><strong>Price:</strong>
+                                                                                                ${{ DB::table('stock_items')->where('item_number', $detail['item_number'])->value('price') * $detail['item_quantity'] }}
+
+                                                                                            </p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        @endforeach
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        @else
+                                                            nothing here
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -274,7 +345,7 @@
                     </div>
 
 
-                    @if ($records->isEmpty())
+                    @if ($results->isEmpty())
                         <div class="text-center text-gray-600 mt-4">
                             <p>No records found.</p>
                         </div>

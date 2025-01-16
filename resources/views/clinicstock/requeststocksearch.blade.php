@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-         {{-- add SEARCH modal button --}}
+        {{-- add SEARCH modal button --}}
         <div class="py-1" style="float:left;">
             @if (count($errors) > 0)
                 <div class="alert alert-danger">
@@ -26,7 +26,7 @@
             @endif
 
             <button type="button" class="btn btn-success" data-toggle="modal" data-target="#searchrModal">
-               Search
+                Search
             </button>
 
         </div>
@@ -68,7 +68,10 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    
+                    <button class="btn btn-success mb-3"
+                        onclick="location.href='{{ route('requeststock.export.csv') }}'">
+                        <i class="fa fa-download"></i> Download CSV
+                    </button>
 
                     <div class="py-12">
                         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -97,9 +100,11 @@
                                             </th>
                                         </tr>
                                         <?php $mypendingrequest = [];
-                                            $pastrequests = [];
-                                            $mypendingrequest = DB::table('stock_requests')->where('requester','=',auth()->user()->name)->get();
-                                            
+                                        $pastrequests = [];
+                                        $mypendingrequest = DB::table('stock_requests')
+                                            ->where('requester', '=', auth()->user()->name)
+                                            ->get();
+                                        
                                         ?>
                                         @if ($mypendingrequest->isEmpty())
                                             <tr>
@@ -127,55 +132,62 @@
                         </div>
                     </div>
 
-                     {{-- modal design search --}}
-     <div class="modal fade" id="searchrModal" tabindex="-1" role="dialog" aria-labelledby="searchrModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header" style="background-color: green; color: white;">
-                    <h5 class="modal-title" id="searchrModalLabel">SEARCH</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form method="POST" action="{{route('searchrstock')}}">
-                    <div class="modal-body">
-                        @csrf
-                        <div class="container">
-                            <div class="row mb-3">
-                                <div class="col">
-                                    <label for="item_name">Item Name</label>
-                                    <input type="text" id="item_name" name="item_name" placeholder="Item Name" class="form-control">
+                    {{-- modal design search --}}
+                    <div class="modal fade" id="searchrModal" tabindex="-1" role="dialog"
+                        aria-labelledby="searchrModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header" style="background-color: green; color: white;">
+                                    <h5 class="modal-title" id="searchrModalLabel">SEARCH</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
                                 </div>
-                                <div class="col">
-                                    <label for="item_number">Item Number</label>
-                                    <input type="text" id="item_number" name="item_number" placeholder="Item Number" class="form-control">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col">
-                                    <label for="procurer">Procurer</label>
-                                    <input type="text" id="procurer" name="procurer" placeholder="Procurer" class="form-control">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col">
-                                    <label for="transaction_date_from">Transaction Date</label>
-                                    <div class="d-flex justify-content-between">
-                                        <input type="date" id="transaction_date_from" name="transaction_date_from" class="form-control">
-                                        <span class="mx-2 align-self-center">-</span>
-                                        <input type="date" id="transaction_date_to" name="transaction_date_to" class="form-control">
+                                <form method="POST" action="{{ route('searchrstock') }}">
+                                    <div class="modal-body">
+                                        @csrf
+                                        <div class="container">
+                                            <div class="row mb-3">
+                                                <div class="col">
+                                                    <label for="item_name">Item Name</label>
+                                                    <input type="text" id="item_name" name="item_name"
+                                                        placeholder="Item Name" class="form-control">
+                                                </div>
+                                                <div class="col">
+                                                    <label for="item_number">Item Number</label>
+                                                    <input type="text" id="item_number" name="item_number"
+                                                        placeholder="Item Number" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col">
+                                                    <label for="procurer">Procurer</label>
+                                                    <input type="text" id="procurer" name="procurer"
+                                                        placeholder="Procurer" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col">
+                                                    <label for="transaction_date_from">Transaction Date</label>
+                                                    <div class="d-flex justify-content-between">
+                                                        <input type="date" id="transaction_date_from"
+                                                            name="transaction_date_from" class="form-control">
+                                                        <span class="mx-2 align-self-center">-</span>
+                                                        <input type="date" id="transaction_date_to"
+                                                            name="transaction_date_to" class="form-control">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary"
+                                            style="width: 100%;">Search</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary" style="width: 100%;">Search</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 
                     {{-- modal design --}}
                     <div class="modal fade" id="searchModal" tabindex="-1" role="dialog"
@@ -192,40 +204,46 @@
                                         </button>
                                     </div>
                                 </div>
-                                <form method="POST" action="{{route('searchrstock')}}">
+                                <form method="POST" action="{{ route('searchrstock') }}">
                                     <div class="modal-body">
                                         @csrf
                                         <div class="container">
                                             <div class="row mb-3">
                                                 <div class="col">
                                                     <label for="item_name">Item Name</label>
-                                                    <input type="text" id="item_name" name="item_name" placeholder="Item Name" class="form-control">
+                                                    <input type="text" id="item_name" name="item_name"
+                                                        placeholder="Item Name" class="form-control">
                                                 </div>
                                                 <div class="col">
                                                     <label for="item_number">Item Number</label>
-                                                    <input type="text" id="item_number" name="item_number" placeholder="Item Number" class="form-control">
+                                                    <input type="text" id="item_number" name="item_number"
+                                                        placeholder="Item Number" class="form-control">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
                                                 <div class="col">
                                                     <label for="procurer">Procurer</label>
-                                                    <input type="text" id="procurer" name="procurer" placeholder="Procurer" class="form-control">
+                                                    <input type="text" id="procurer" name="procurer"
+                                                        placeholder="Procurer" class="form-control">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
                                                 <div class="col">
                                                     <label for="transaction_date_from">Transaction Date</label>
                                                     <div class="d-flex justify-content-between">
-                                                        <input type="date" id="transaction_date_from" name="transaction_date_from" class="form-control">
+                                                        <input type="date" id="transaction_date_from"
+                                                            name="transaction_date_from" class="form-control">
                                                         <span class="mx-2 align-self-center">-</span>
-                                                        <input type="date" id="transaction_date_to" name="transaction_date_to" class="form-control">
+                                                        <input type="date" id="transaction_date_to"
+                                                            name="transaction_date_to" class="form-control">
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="submit" class="btn btn-primary" style="width: 100%;">Search</button>
+                                        <button type="submit" class="btn btn-primary"
+                                            style="width: 100%;">Search</button>
                                     </div>
                                 </form>
 

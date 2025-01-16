@@ -13,10 +13,11 @@ class StockItem extends Model
         'item_name',
         'item_quantity',
         'item_number',
+        'price',
+        'user'
     ];
 
-    public $timestamps = false;
-    const CREATED_AT = 'creation_date';
-    const UPDATED_AT = 'update_date';
+    public $timestamps = true;
+    const UPDATED_AT = 'update_at';
 
 }

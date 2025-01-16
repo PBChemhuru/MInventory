@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        
+
 
 
         {{-- Consolidated error and success messages --}}
@@ -35,16 +35,17 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <div class="m-15" style="float:right;">
-                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#searchrModal" sty>
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#searchrModal"
+                            sty>
                             Search
                         </button>
                     </div>
 
 
                     <div class="py-12">
-                        
+
                         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                            
+
                             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                                 <div class="p-6 text-gray-900 dark:text-gray-100">
                                     <table style="border-collapse: collapse; width: 100%; margin-top: 20px;">
@@ -72,7 +73,7 @@
                                             @else
                                                 @foreach ($clinichis as $hisrequest)
                                                     <tr>
-                                                         <td style="padding: 12px; border: 1px solid #ddd;">
+                                                        <td style="padding: 12px; border: 1px solid #ddd;">
                                                             {{ $hisrequest->drug }}</td>
                                                         <td style="padding: 12px; border: 1px solid #ddd;">
                                                             {{ $hisrequest->damount }}</td>
@@ -128,6 +129,17 @@
                                                 <label for="dispenser" class="form-label">Dispenser</label>
                                                 <input type="text" id="dispenser" name="dispenser"
                                                     placeholder="Enter Dispenser" class="form-control">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="clinics">Choose a Clinic</label><br>
+                                                <select name="clinics" id="clinics" style="width: 100%;" required>
+                                                    <?php $clinics = DB::table('clinics')->get('clinic_name'); ?>
+                                                    <option value="" disabled selected>Select a clinic</option>
+                                                    @foreach ($clinics as $clinic)
+                                                        <option value="{{ $clinic->clinic_name }}">
+                                                            {{ $clinic->clinic_name }}</option>
+                                                    @endforeach
+                                                </select>
                                             </div>
                                         </div>
 

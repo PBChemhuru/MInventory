@@ -93,10 +93,53 @@ class StockTransactionsController extends Controller
             $query->where(DB::raw('DATE(updated_at)'), '<=', $request->transaction_date_to);
         }
 
-        // Execute the query and get the results
-        $results = $query->get();   
+        // Execute the query and get the result
+        $results = $query->get(); 
+        session(['search_results' => $results]);
         return view('StockTransactions.transactionsearch', ['results' => $results]);
         
+
+    }
+
+    public function exportCsv()
+    {
+        $results = session('search_results', []);
+
+        if (empty($results)) {
+            return back()->with('error', 'No search results found to export.');
+        }
+    
+        // Generate CSV response
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="search_results.csv"',
+        ];
+    
+        $callback = function () use ($results) {
+            $file = fopen('php://output', 'w');
+    
+            // Add CSV headers
+            fputcsv($file, [
+                'Clinic', 
+                'Procurer', 'Transaction Date','Received by', 'Received at', 'Details'
+            ]);
+    
+            // Add data rows
+            foreach ($results as $result) {
+                fputcsv($file, [
+                    $result->clinics,
+                    $result->procurer,
+                    $result->created_at,
+                    $result->recieved_by,
+                    $result->updated_at,
+                    $result->details
+                ]);
+            }
+    
+            fclose($file);
+        };
+    
+        return response()->stream($callback, 200, $headers);
 
     }
 }

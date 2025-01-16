@@ -9,15 +9,13 @@ class Transferrecord extends Model
 {
     use HasFactory;
 
-    public $fillable =
-    [
-        'drug_name',
+    public $fillable = [
+        'transdetail',
         'clinic_from',
         'sender',
-        'drug_amount',
         'clinic_to',
-        'reciever',
-        'status'
-
+        'receiver',
+        'status',
+        'p_o_d'
     ];
 }

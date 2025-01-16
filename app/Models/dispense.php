@@ -12,6 +12,7 @@ class dispense extends Model
     [
         'UIN',
         'drug',
+        'drug_number',
         'damount',
         'recipient',
         'dispenser',

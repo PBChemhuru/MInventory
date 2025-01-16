@@ -45,9 +45,11 @@
                             <th style="padding: 8px;text-align: center;border-bottom: 1px solid #DDD; font-size: 18px">
                                 Requested At:
                             </th>
+                            <!--email response to request note request are not bulked
                             <th style="padding: 8px;text-align: center;border-bottom: 1px solid #DDD; font-size: 18px">
                                 View
                             </th>
+                        -->
                         </tr>
                         <tr>
                             @foreach ($requests as $request)
@@ -63,7 +65,7 @@
                                     @csrf
                                     <input type="hidden" name="id" value="{{ $request->id }}">
                                     <button type="submit" class="btn" style="background: none; border: none; padding: 0; cursor: pointer;">
-                                        <i class="fas fa-eye" style="color: blue; font-size: 24px;" title="Approve"></i>
+                                        <i class="fas fa-check" style="color: blue; font-size: 24px;" title="Approve"></i>
                                     </button>
                                 </form> 
 
